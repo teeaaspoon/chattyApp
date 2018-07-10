@@ -91,7 +91,7 @@ class App extends Component {
                 <NavBar />
                 <MessageList messages={incomingMessageItems} />
                 <ChatBar
-                    currentUser={this.state.currentUser.name}
+                    username={this.state.currentUser.name}
                     newMessageFunction={this.addNewMessage}
                 />
             </div>
