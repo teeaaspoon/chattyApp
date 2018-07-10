@@ -18,7 +18,7 @@ class ChatBar extends Component {
         this.setState({ username: event.target.value });
     };
 
-    handleKeyPress = event => {
+    handleEnter = event => {
         if (event.key === "Enter") {
             this.props.newMessageFunction(
                 this.state.username,
@@ -40,7 +40,7 @@ class ChatBar extends Component {
                 <input
                     className="chatbar-message"
                     placeholder="Type a message and hit ENTER"
-                    onKeyPress={this.handleKeyPress}
+                    onKeyPress={this.handleEnter}
                     onChange={this.handleMessageChange}
                     value={this.state.messageContent}
                 />

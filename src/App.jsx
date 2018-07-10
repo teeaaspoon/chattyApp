@@ -41,6 +41,10 @@ class App extends Component {
             username: username,
             content: message
         };
+        // if the username is different it means the username was changed so reset the state
+        if (this.state.currentUser.name != username) {
+            this.setState({ currentUser: { name: username } });
+        }
         // send websocket server the new message object
         this.state.socket.send(JSON.stringify(newMessageObject));
     };
@@ -58,18 +62,6 @@ class App extends Component {
             const messages = this.state.messages.concat(newMessage);
             this.setState({ messages: messages });
         };
-
-        // setTimeout(() => {
-        //     console.log("simulating incoming message");
-        //     const newMessage = {
-        //         id: 3,
-        //         type: "incomingMessage",
-        //         username: "Michelle",
-        //         content: "Hello there!"
-        //     };
-        //     const messages = this.state.messages.concat(newMessage);
-        //     this.setState({ messages: messages });
-        // }, 3000);
     }
 
     render() {
