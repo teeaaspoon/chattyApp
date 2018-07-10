@@ -37,12 +37,19 @@ class App extends Component {
     addNewMessage = (username, message) => {
         const newMessageObject = {
             id: null,
-            type: "incomingMessage",
+            type: "postMessage",
             username: username,
             content: message
         };
-        // if the username is different it means the username was changed so reset the state
+        // if the username is different it means the username was changed so reset the state send notification object to server
         if (this.state.currentUser.name != username) {
+            const newNotificationObject = {
+                type: "postNotification",
+                content: `${
+                    this.state.currentUser.name
+                } has changed their name to ${username}`
+            };
+            this.state.socket.send(JSON.stringify(newNotificationObject));
             this.setState({ currentUser: { name: username } });
         }
         // send websocket server the new message object
