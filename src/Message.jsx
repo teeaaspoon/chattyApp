@@ -3,6 +3,7 @@ import React, { Component } from "react";
 class Message extends Component {
     render() {
         if (this.props.type === "incomingMessage") {
+            // regular messages
             return (
                 <div className="message">
                     <span className="message-username">

@@ -17,6 +17,8 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            socket: new WebSocket("ws://localhost:3001/"),
+            currentUser: { name: "Bob" },
             messages: [
                 {
                     type: "incomingMessage",
@@ -27,36 +29,49 @@ class App extends Component {
                 {
                     type: "incomingNotification",
                     content: "Anonymous1 changed their name to nomnom"
-                },
-                {
-                    type: "incomingMessage",
-                    content:
-                        "I wouldn't want to download Kraft Dinner. I'd be scared of cheese packet loss.",
-                    username: "Anonymous2"
-                },
-                {
-                    type: "incomingMessage",
-                    content: "...",
-                    username: "nomnom"
-                },
-                {
-                    type: "incomingMessage",
-                    content:
-                        "I'd love to download a fried egg, but I'm afraid encryption would scramble it",
-                    username: "Anonymous2"
-                },
-                {
-                    type: "incomingMessage",
-                    content: "This isn't funny. You're not funny",
-                    username: "nomnom"
-                },
-                {
-                    type: "incomingNotification",
-                    content: "Anonymous2 changed their name to NotFunny"
                 }
             ]
         };
     }
+
+    addNewMessage = (username, message) => {
+        const newMessageObject = {
+            id: null,
+            type: "incomingMessage",
+            username: username,
+            content: message
+        };
+        // send websocket server the new message object
+        this.state.socket.send(JSON.stringify(newMessageObject));
+    };
+
+    componentDidMount() {
+        console.log("ComponentDidMount <App />");
+
+        this.state.socket.onopen = event => {
+            console.log("You have connected to the socket server");
+        };
+
+        // response from websocket server
+        this.state.socket.onmessage = event => {
+            const newMessage = JSON.parse(event.data);
+            const messages = this.state.messages.concat(newMessage);
+            this.setState({ messages: messages });
+        };
+
+        // setTimeout(() => {
+        //     console.log("simulating incoming message");
+        //     const newMessage = {
+        //         id: 3,
+        //         type: "incomingMessage",
+        //         username: "Michelle",
+        //         content: "Hello there!"
+        //     };
+        //     const messages = this.state.messages.concat(newMessage);
+        //     this.setState({ messages: messages });
+        // }, 3000);
+    }
+
     render() {
         const incomingMessageItems = this.state.messages.map(
             (message, index) => {
@@ -75,7 +90,10 @@ class App extends Component {
             <div>
                 <NavBar />
                 <MessageList messages={incomingMessageItems} />
-                <ChatBar />
+                <ChatBar
+                    currentUser={this.state.currentUser.name}
+                    newMessageFunction={this.addNewMessage}
+                />
             </div>
         );
     }
