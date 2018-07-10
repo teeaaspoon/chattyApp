@@ -9,6 +9,7 @@ function NavBar(props) {
             <a href="/" className="navbar-brand">
                 Chatty
             </a>
+            <span>{props.usersOnline} Users Online</span>
         </nav>
     );
 }
@@ -30,7 +31,8 @@ class App extends Component {
                     type: "incomingNotification",
                     content: "Anonymous1 changed their name to nomnom"
                 }
-            ]
+            ],
+            usersOnline: 1
         };
     }
 
@@ -65,9 +67,17 @@ class App extends Component {
 
         // response from websocket server
         this.state.socket.onmessage = event => {
-            const newMessage = JSON.parse(event.data);
-            const messages = this.state.messages.concat(newMessage);
-            this.setState({ messages: messages });
+            const socketResponse = JSON.parse(event.data);
+
+            if (
+                socketResponse.type === "incomingMessage" ||
+                socketResponse.type === "incomingNotification"
+            ) {
+                const messages = this.state.messages.concat(socketResponse);
+                this.setState({ messages: messages });
+            } else if (typeof socketResponse === "number") {
+                this.setState({ usersOnline: socketResponse });
+            }
         };
     }
 
@@ -87,7 +97,7 @@ class App extends Component {
 
         return (
             <div>
-                <NavBar />
+                <NavBar usersOnline={this.state.usersOnline} />
                 <MessageList messages={incomingMessageItems} />
                 <ChatBar
                     username={this.state.currentUser.name}
