@@ -15,6 +15,11 @@ const wss = new WebSocket({ server });
 wss.on("connection", ws => {
     console.log("Client connected");
 
+    // generate array of 4 colours,
+    // ws.client.send one of the colours
+    // client --- if socketresponse is type color, assign color to user
+
+    // send the user count to the client
     wss.clients.forEach(client => {
         if (client.readyState === 1) {
             client.send(JSON.stringify(wss.clients.size));
@@ -48,6 +53,8 @@ wss.on("connection", ws => {
 
     ws.on("close", () => {
         console.log("Client disconnected");
+
+        // send the usercount to the client
         wss.clients.forEach(client => {
             if (client.readyState === 1) {
                 client.send(JSON.stringify(wss.clients.size));

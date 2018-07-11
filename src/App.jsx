@@ -19,7 +19,7 @@ class App extends Component {
         super(props);
         this.state = {
             socket: new WebSocket("ws://localhost:3001/"),
-            currentUser: { name: "Bob" },
+            currentUser: { name: "" },
             messages: [
                 {
                     type: "incomingMessage",
@@ -43,13 +43,20 @@ class App extends Component {
             username: username,
             content: message
         };
+        if (!username) {
+            newMessageObject.username = "Anonymous";
+        }
         // if the username is different it means the username was changed so reset the state send notification object to server
         if (this.state.currentUser.name != username) {
+            let oldname = this.state.currentUser.name;
+            let newname = username;
+            oldname
+                ? (oldname = this.state.currentUser.name)
+                : (oldname = "Anonymous");
+            newname ? (newname = username) : (newname = "Anonymous");
             const newNotificationObject = {
                 type: "postNotification",
-                content: `${
-                    this.state.currentUser.name
-                } has changed their name to ${username}`
+                content: `${oldname} has changed their name to ${newname}`
             };
             this.state.socket.send(JSON.stringify(newNotificationObject));
             this.setState({ currentUser: { name: username } });
