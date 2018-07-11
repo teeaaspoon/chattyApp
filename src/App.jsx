@@ -23,18 +23,7 @@ class App extends Component {
                 name: "",
                 color: null
             },
-            messages: [
-                {
-                    type: "incomingMessage",
-                    content:
-                        "I won't be impressed with technology until I can download food.",
-                    username: "Anonymous1"
-                },
-                {
-                    type: "incomingNotification",
-                    content: "Anonymous1 changed their name to nomnom"
-                }
-            ],
+            messages: [],
             usersOnline: 1
         };
     }
