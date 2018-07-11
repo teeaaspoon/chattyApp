@@ -19,7 +19,10 @@ class App extends Component {
         super(props);
         this.state = {
             socket: new WebSocket("ws://localhost:3001/"),
-            currentUser: { name: "" },
+            currentUser: {
+                name: "",
+                color: null
+            },
             messages: [
                 {
                     type: "incomingMessage",
@@ -82,8 +85,10 @@ class App extends Component {
             ) {
                 const messages = this.state.messages.concat(socketResponse);
                 this.setState({ messages: messages });
-            } else if (typeof socketResponse === "number") {
-                this.setState({ usersOnline: socketResponse });
+            } else if (socketResponse.type === "usersOnline") {
+                this.setState({ usersOnline: socketResponse.amountOfUsers });
+            } else if (socketResponse.type === "userColor") {
+                this.setState({ currentUser: { color: socketResponse.color } });
             }
         };
     }
