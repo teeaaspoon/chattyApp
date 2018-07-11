@@ -39,12 +39,13 @@ class App extends Component {
         };
     }
 
-    addNewMessage = (username, message) => {
+    addNewMessage = (username, message, color) => {
         const newMessageObject = {
             id: null,
             type: "postMessage",
             username: username,
-            content: message
+            content: message,
+            color: color
         };
         if (!username) {
             newMessageObject.username = "Anonymous";
@@ -62,7 +63,12 @@ class App extends Component {
                 content: `${oldname} has changed their name to ${newname}`
             };
             this.state.socket.send(JSON.stringify(newNotificationObject));
-            this.setState({ currentUser: { name: username } });
+            this.setState({
+                currentUser: {
+                    name: newname,
+                    color: this.state.currentUser.color
+                }
+            });
         }
         // send websocket server the new message object
         this.state.socket.send(JSON.stringify(newMessageObject));
@@ -79,6 +85,29 @@ class App extends Component {
         this.state.socket.onmessage = event => {
             const socketResponse = JSON.parse(event.data);
 
+            // switch (socketResponse.type) {
+            //     case "incomingMessage":
+            //         let messages = this.state.messages.concat(socketResponse);
+            //         this.setState({ messages: messages });
+            //         break;
+            //     case "incomingNotification":
+            //         messages = this.state.messages.concat(socketResponse);
+            //         this.setState({ messages: messages });
+            //     case "usersOnline":
+            //         this.setState({
+            //             usersOnline: socketResponse.amountOfUsers
+            //         });
+            //         break;
+            //     case "userColor":
+            //         this.setState({
+            //             currentUser: { color: socketResponse.color }
+            //         });
+            //         break;
+            //     default:
+            //         console.log(socketResponse);
+            //         console.log("Unknown response type");
+            // }
+
             if (
                 socketResponse.type === "incomingMessage" ||
                 socketResponse.type === "incomingNotification"
@@ -88,7 +117,12 @@ class App extends Component {
             } else if (socketResponse.type === "usersOnline") {
                 this.setState({ usersOnline: socketResponse.amountOfUsers });
             } else if (socketResponse.type === "userColor") {
-                this.setState({ currentUser: { color: socketResponse.color } });
+                this.setState({
+                    currentUser: {
+                        name: this.state.currentUser.name,
+                        color: socketResponse.color
+                    }
+                });
             }
         };
     }
@@ -102,6 +136,7 @@ class App extends Component {
                         type={message.type}
                         content={message.content}
                         username={message.username}
+                        color={message.color}
                     />
                 );
             }
@@ -114,6 +149,7 @@ class App extends Component {
                 <ChatBar
                     username={this.state.currentUser.name}
                     newMessageFunction={this.addNewMessage}
+                    color={this.state.currentUser.color}
                 />
             </div>
         );

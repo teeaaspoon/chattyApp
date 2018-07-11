@@ -22,7 +22,8 @@ class ChatBar extends Component {
         if (event.key === "Enter") {
             this.props.newMessageFunction(
                 this.state.username,
-                this.state.messageContent
+                this.state.messageContent,
+                this.props.color
             );
             this.setState({ messageContent: "" });
         }
