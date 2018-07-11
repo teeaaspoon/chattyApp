@@ -12,21 +12,17 @@ const server = express()
 
 const wss = new WebSocket({ server });
 
+const arrayOfColors = ["red", "orange", "blue", "purple"];
+const randomInt = () => {
+    return Math.floor(Math.random() * Math.floor(4));
+};
+
 wss.on("connection", ws => {
     console.log("Client connected");
-    const arrayOfColors = ["red", "orange", "blue", "purple"];
-    const randomInt = () => {
-        return Math.floor(Math.random() * Math.floor(4));
-    };
+
     ws.send(
         JSON.stringify({ type: "userColor", color: arrayOfColors[randomInt()] })
     );
-
-    // generate array of 4 colours,
-    // ws.client.send one of the colours
-    // client --- if socketresponse is type color, assign color to user
-
-    // or, assign id to every client. map color to every id. every new message that comes gets the color as well
 
     // send the user count to the client
     wss.clients.forEach(client => {

@@ -85,29 +85,6 @@ class App extends Component {
         this.state.socket.onmessage = event => {
             const socketResponse = JSON.parse(event.data);
 
-            // switch (socketResponse.type) {
-            //     case "incomingMessage":
-            //         let messages = this.state.messages.concat(socketResponse);
-            //         this.setState({ messages: messages });
-            //         break;
-            //     case "incomingNotification":
-            //         messages = this.state.messages.concat(socketResponse);
-            //         this.setState({ messages: messages });
-            //     case "usersOnline":
-            //         this.setState({
-            //             usersOnline: socketResponse.amountOfUsers
-            //         });
-            //         break;
-            //     case "userColor":
-            //         this.setState({
-            //             currentUser: { color: socketResponse.color }
-            //         });
-            //         break;
-            //     default:
-            //         console.log(socketResponse);
-            //         console.log("Unknown response type");
-            // }
-
             if (
                 socketResponse.type === "incomingMessage" ||
                 socketResponse.type === "incomingNotification"
