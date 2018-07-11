@@ -27,4 +27,4 @@ open http://localhost:3000
 
 ### Screenshots
 
-!["Screenshot of person composing new tweet"]()
+!["Screenshot of chattyApp"](https://github.com/teeaaspoon/chattyApp/blob/master/docs/ChattyApp%20Screenshot.png)
