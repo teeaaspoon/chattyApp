@@ -1,6 +1,6 @@
 # ChattyApp
 
-A real time chat application that allows you to chat with anyone whos also on the app. Built with React and WebSockets
+A real time chat application that allows users to send text or images with anyone whos also on the app. Built with React and WebSockets
 
 ### Installation
 
