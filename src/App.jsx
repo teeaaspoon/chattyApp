@@ -2,17 +2,7 @@ import React, { Component } from "react";
 import ChatBar from "./ChatBar.jsx";
 import MessageList from "./MessageList.jsx";
 import Message from "./Message.jsx";
-
-function NavBar(props) {
-    return (
-        <nav className="navbar">
-            <a href="/" className="navbar-brand">
-                Chatty
-            </a>
-            <span>{props.usersOnline} Users Online</span>
-        </nav>
-    );
-}
+import NavBar from "./NavBar.jsx";
 
 class App extends Component {
     constructor(props) {
@@ -23,7 +13,12 @@ class App extends Component {
                 name: "",
                 color: null
             },
-            messages: [],
+            messages: [
+                {
+                    type: "incomingNotification",
+                    content: "Welcome to ChattyApp. Chat with others now~~~~"
+                }
+            ],
             usersOnline: 1
         };
     }
@@ -43,9 +38,11 @@ class App extends Component {
         if (this.state.currentUser.name != username) {
             let oldname = this.state.currentUser.name;
             let newname = username;
+            // if this.state.currentUser.name is "" then call it Anonymous in the notification
             oldname
                 ? (oldname = this.state.currentUser.name)
                 : (oldname = "Anonymous");
+            // if person changed their usename to "" then call it Anonymous in the notification
             newname ? (newname = username) : (newname = "Anonymous");
             const newNotificationObject = {
                 type: "postNotification",
@@ -64,8 +61,6 @@ class App extends Component {
     };
 
     componentDidMount() {
-        console.log("ComponentDidMount <App />");
-
         this.state.socket.onopen = event => {
             console.log("You have connected to the socket server");
         };

@@ -6,6 +6,7 @@ class MessageList extends Component {
     }
 
     componentDidUpdate() {
+        // autoscrolls to bottom every update
         this.bottomOfList.scrollIntoView({ behaviour: "smooth" });
     }
 
