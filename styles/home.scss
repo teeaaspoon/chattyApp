@@ -54,6 +54,11 @@ body {
 
 .message-content {
     flex: 8;
+    img {
+        height: auto;
+        width: auto;
+        max-width: 60vw;
+    }
 }
 
 .message-username {

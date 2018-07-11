@@ -4,6 +4,7 @@ class Message extends Component {
     usernameStyle = {
         color: this.props.color
     };
+
     checkIfPicture(content) {
         if (
             content.startsWith("http") &&
