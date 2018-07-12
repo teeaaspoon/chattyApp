@@ -34,7 +34,7 @@ class App extends Component {
         if (!username) {
             newMessageObject.username = "Anonymous";
         }
-        // if the username is different it means the username was changed so reset the state send notification object to server
+        // if the username is different it means the username was changed so change the state of username and send notification object to server
         if (this.state.currentUser.name != username) {
             let oldname = this.state.currentUser.name;
             let newname = username;
@@ -69,21 +69,30 @@ class App extends Component {
         this.state.socket.onmessage = event => {
             const socketResponse = JSON.parse(event.data);
 
-            if (
-                socketResponse.type === "incomingMessage" ||
-                socketResponse.type === "incomingNotification"
-            ) {
-                const messages = this.state.messages.concat(socketResponse);
-                this.setState({ messages: messages });
-            } else if (socketResponse.type === "usersOnline") {
-                this.setState({ usersOnline: socketResponse.amountOfUsers });
-            } else if (socketResponse.type === "userColor") {
-                this.setState({
-                    currentUser: {
-                        name: this.state.currentUser.name,
-                        color: socketResponse.color
-                    }
-                });
+            switch (socketResponse.type) {
+                case "incomingMessage":
+                    let messages = this.state.messages.concat(socketResponse);
+                    this.setState({ messages: messages });
+                    break;
+                case "incomingNotification":
+                    messages = this.state.messages.concat(socketResponse);
+                    this.setState({ messages: messages });
+                    break;
+                case "usersOnline":
+                    this.setState({
+                        usersOnline: socketResponse.amountOfUsers
+                    });
+                    break;
+                case "userColor":
+                    this.setState({
+                        currentUser: {
+                            name: this.state.currentUser.name,
+                            color: socketResponse.color
+                        }
+                    });
+                    break;
+                default:
+                    console.log("Unsupported message:", socketResponse);
             }
         };
     }

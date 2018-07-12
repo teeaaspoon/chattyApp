@@ -19,61 +19,57 @@ const randomInt = () => {
 
 wss.on("connection", ws => {
     console.log("Client connected");
-
+    // send the user color to the user
     ws.send(
         JSON.stringify({ type: "userColor", color: arrayOfColors[randomInt()] })
     );
-
-    // send the user count to the client
-    wss.clients.forEach(client => {
-        if (client.readyState === 1) {
-            client.send(
-                JSON.stringify({
-                    type: "usersOnline",
-                    amountOfUsers: wss.clients.size
-                })
-            );
-        }
-    });
+    // send the updated usercount to everyone
+    let userCountObject = {
+        type: "usersOnline",
+        amountOfUsers: wss.clients.size
+    };
+    wss.broadcast(JSON.stringify(userCountObject));
 
     ws.on("message", data => {
-        const newMessage = JSON.parse(data);
+        handleMessage(data);
+    });
 
-        if (newMessage.type === "postMessage") {
-            // add uuid to the newMessage
+    ws.on("close", () => {
+        console.log("Client disconnected");
+        // update usercount
+        userCountObject.amountOfUsers = wss.clients.size;
+        // send the updated usercount to everyone
+        wss.broadcast(JSON.stringify(userCountObject));
+    });
+});
+
+//  FUNCTIONS
+
+// handles message event
+const handleMessage = data => {
+    const newMessage = JSON.parse(data);
+    switch (newMessage.type) {
+        case "postMessage":
             newMessage.id = uuid();
             newMessage.type = "incomingMessage";
             console.log(
                 `User ${newMessage.username} said ${newMessage.content}`
             );
-        } else if (newMessage.type === "postNotification") {
+            break;
+        case "postNotification":
             newMessage.type = "incomingNotification";
-        } else {
-            throw new Error("Unkown event type " + data.type);
+            break;
+        default:
+            console.log("unsupported message type:", newMessage);
+    }
+    wss.broadcast(JSON.stringify(newMessage));
+};
+
+// broadcast function
+wss.broadcast = data => {
+    wss.clients.forEach(client => {
+        if (client.readyState === 1) {
+            client.send(data);
         }
-
-        // broadcast newMessage to all clients
-        wss.clients.forEach(client => {
-            if (client.readyState === 1) {
-                console.log("sending message back");
-                client.send(JSON.stringify(newMessage));
-            }
-        });
     });
-
-    ws.on("close", () => {
-        console.log("Client disconnected");
-
-        // send the usercount to the client
-        wss.clients.forEach(client => {
-            if (client.readyState === 1) {
-                client.send(
-                    JSON.stringify({
-                        type: "usersOnline",
-                        amountOfUsers: wss.clients.size
-                    })
-                );
-            }
-        });
-    });
-});
+};
