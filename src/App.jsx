@@ -8,7 +8,6 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            socket: new WebSocket("ws://localhost:3001/"),
             currentUser: {
                 name: "",
                 color: null
@@ -21,6 +20,7 @@ class App extends Component {
             ],
             usersOnline: 1
         };
+        this.socket = new WebSocket("ws://localhost:3001/");
     }
 
     addNewMessage = (username, message, color) => {
@@ -48,7 +48,7 @@ class App extends Component {
                 type: "postNotification",
                 content: `${oldname} has changed their name to ${newname}`
             };
-            this.state.socket.send(JSON.stringify(newNotificationObject));
+            this.socket.send(JSON.stringify(newNotificationObject));
             this.setState({
                 currentUser: {
                     name: newname,
@@ -57,16 +57,16 @@ class App extends Component {
             });
         }
         // send websocket server the new message object
-        this.state.socket.send(JSON.stringify(newMessageObject));
+        this.socket.send(JSON.stringify(newMessageObject));
     };
 
     componentDidMount() {
-        this.state.socket.onopen = event => {
+        this.socket.onopen = event => {
             console.log("You have connected to the socket server");
         };
 
         // response from websocket server
-        this.state.socket.onmessage = event => {
+        this.socket.onmessage = event => {
             const socketResponse = JSON.parse(event.data);
 
             switch (socketResponse.type) {
